@@ -1,7 +1,7 @@
 use std::process::Command;
 use actix_web::{HttpResponse, get};
 use serde::{Deserialize, Serialize};
-use crate::constants::{APPLICATION_JSON, TARGET_IP_ADDRESS};
+use crate::constants::{APPLICATION_JSON, PING_SCRIPT_PATH, TARGET_IP_ADDRESS};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Status {
@@ -19,7 +19,7 @@ impl Status {
 #[get("/check")]
 pub async fn check() -> HttpResponse {
 
-    let output = Command::new("./bash/ping.sh")
+    let output = Command::new(PING_SCRIPT_PATH)
         .arg(TARGET_IP_ADDRESS)
         .output()
         .expect("Failed to execute command");
