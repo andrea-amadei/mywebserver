@@ -19,17 +19,18 @@ impl Status {
 #[get("/check")]
 pub async fn check() -> HttpResponse {
 
-    let output = Command::new(PING_SCRIPT_PATH)
+    let output = Command::new("sh")
+        .arg(PING_SCRIPT_PATH)
         .arg(TARGET_IP_ADDRESS)
         .output()
         .expect("Failed to execute command");
 
-    let status: &str;
+    let output = std::str::from_utf8(output.stdout.as_slice()).unwrap().trim();
 
-    status = match std::str::from_utf8(&output.stdout) {
-        Ok("OK") => "ON",
-        Ok("ERROR") => "OFF",
-        _ => "UNKNOWN"
+    let status: &str = match output {
+        "OK" => "ON",
+        "ERROR" => "OFF",
+        _ => "UNKNOWN_ERROR"
     };
 
     HttpResponse::Ok()
